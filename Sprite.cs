@@ -13,7 +13,20 @@ namespace Pang
         public bool Activo { get; set; }
         public int Ancho { get; set; }
         public int Alto { get; set; }
-        private Texture2D imagen;
+        protected Texture2D imagen;
+        protected int cantidadFotogramas;
+        protected Texture2D[][] secuencia;
+        protected int fotogramaActual;
+        protected int tiempoEnCadaFotograma;
+        protected int tiempoHastaSiguienteFotograma;
+        bool haySecuencia;
+
+        protected enum direcciones
+        {
+            DERECHA, IZQUIERDA
+        };
+
+        int direccionActual = (int)direcciones.DERECHA;
 
         public Sprite(int x, int y, string nombreImagen, ContentManager Content)
         {
@@ -23,7 +36,26 @@ namespace Pang
             Activo = true;
             Ancho = imagen.Width;
             Alto = imagen.Height;
+            haySecuencia = false;
         }
+
+        public Sprite(int x, int y, string[] imagenes, ContentManager Content)
+        {
+            X = x;
+            Y = y;
+            Activo = true;
+            secuencia = new Texture2D[sizeof(direcciones)][];
+            CargarSecuencia(0, imagenes, Content);
+            imagen = secuencia[0][0];
+            fotogramaActual = 0;
+            tiempoEnCadaFotograma = 100;
+            tiempoHastaSiguienteFotograma = tiempoEnCadaFotograma;
+
+            Ancho = imagen.Width;
+            Alto = imagen.Height;
+        }
+
+
 
         public void SetVelocidad(float vx, float vy)
         {
@@ -31,7 +63,7 @@ namespace Pang
             VelocY = vy;
         }
 
-        public void Dibujar(SpriteBatch spriteBatch)
+        public virtual void Dibujar(SpriteBatch spriteBatch)
         {
             if (Activo)
             {
@@ -51,6 +83,52 @@ namespace Pang
             Rectangle r2 = new Rectangle((int)otro.X, (int)otro.Y, otro.imagen.Width, otro.imagen.Height);
 
             return r1.Intersects(r2);
+        }
+
+        public virtual void Animar(GameTime gameTime)
+        {
+            if (haySecuencia)
+            {
+                tiempoHastaSiguienteFotograma -= gameTime.ElapsedGameTime.Milliseconds;
+                if(tiempoHastaSiguienteFotograma <= 0)
+                {
+                    fotogramaActual++;
+                    
+                    if (fotogramaActual >= cantidadFotogramas)
+                        fotogramaActual = 0;
+
+                    tiempoHastaSiguienteFotograma = tiempoEnCadaFotograma;
+                    imagen = secuencia[direccionActual][fotogramaActual];
+                }
+            }
+        }
+
+        public void CargarSecuencia(byte direcc, string[] imagenes, ContentManager Content)
+        {
+            byte tamanyoSecuencia = (byte)imagenes.Length;
+            secuencia[direcc] = new Texture2D[tamanyoSecuencia];
+            for (int i = 0; i < imagenes.Length; i++)
+            {
+                secuencia[direcc][i] = Content.Load<Texture2D>(imagenes[i]);
+            }
+            haySecuencia = true;
+            cantidadFotogramas = imagenes.Length;
+            direccionActual = direcc;
+
+        }
+
+        public void CambiarDireccion(byte nuevaDir)
+        {
+            if (!haySecuencia)
+                return;
+
+            if (direccionActual != nuevaDir)
+            {
+                direccionActual = nuevaDir;
+                fotogramaActual = 0;
+                cantidadFotogramas = (byte)secuencia[direccionActual].Length;
+                imagen = secuencia[direccionActual][0];
+            }
         }
     }
 }

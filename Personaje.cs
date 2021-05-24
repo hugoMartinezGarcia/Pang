@@ -10,11 +10,8 @@ namespace Pang
     {
         public int Vidas { get; set; }
 
-        public Personaje(int x, int y, string nombreImagen, ContentManager Content)
-            : base(x, y, new string[] { 
-                "personajeD1", "personajeD2", "personajeD3", "personajeD4", 
-                "personajeD5", "personajeD4", "personajeD3", "personajeD2" }, 
-                  Content)
+        public Personaje(int x, int y, ContentManager Content)
+            : base(x, y, new string[] {"personajeD"}, Content)
         {
             VelocX = 240;
             Vidas = 3;
@@ -22,8 +19,13 @@ namespace Pang
                 new string[] { "personajeI1", "personajeI2", "personajeI3", 
                     "personajeI4", "personajeI5", "personajeI4", "personajeI3", "personajeI2" }, 
                 Content);
-            CambiarDireccion((byte)direcciones.DERECHA);
-            tiempoEnCadaFotograma = 100;
+
+            CargarSecuencia((byte)direcciones.DERECHA,
+                new string[] { "personajeD1", "personajeD2", "personajeD3", "personajeD4",
+                "personajeD5", "personajeD4", "personajeD3", "personajeD2" },
+                Content);
+
+            CambiarDireccion((byte)direcciones.ESTATICO);
         }
 
         public void MoverDerecha(GameTime gameTime)
@@ -42,6 +44,12 @@ namespace Pang
             float desplazamiento = VelocX * (float)gameTime.ElapsedGameTime.TotalSeconds;
             if (X - desplazamiento > 24)
                 X -= desplazamiento;
+        }
+
+        public void PermanecerEstatico(GameTime gameTime)
+        {
+            CambiarDireccion((byte)direcciones.ESTATICO);
+            base.Animar(gameTime);
         }
 
         public void MoverAPosicionInicial()

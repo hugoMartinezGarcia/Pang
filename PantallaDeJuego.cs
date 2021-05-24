@@ -32,7 +32,7 @@ namespace Pang
 
         public void CargarContenidos(ContentManager Content)
         {
-            personaje = new Personaje(549, 538, "personaje", Content);
+            personaje = new Personaje(549, 538, Content);
             fondo = new Sprite(0, 0, "fondoNivel1", Content);
             bola = new Bola(349, 40, Content);
             fuente = Content.Load<SpriteFont>("Arial");
@@ -95,11 +95,18 @@ namespace Pang
                 gestor.modoActual = GestorDePantallas.MODO.CREDITOS;
             }
 
+            if (!estadoTeclado.IsKeyDown(Keys.Left) 
+                    && !estadoTeclado.IsKeyDown(Keys.Right))
+                personaje.PermanecerEstatico(gameTime);
+
             if (estadoTeclado.IsKeyDown(Keys.Left))
                 personaje.MoverIzquierda(gameTime);
 
+            
+
             if (estadoTeclado.IsKeyDown(Keys.Right))
                 personaje.MoverDerecha(gameTime);
+
 
             if (!disparo.Activo && estadoTeclado.IsKeyDown(Keys.Space))
             {

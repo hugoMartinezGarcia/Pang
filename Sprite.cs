@@ -23,10 +23,10 @@ namespace Pang
 
         protected enum direcciones
         {
-            DERECHA, IZQUIERDA
+            ESTATICO, DERECHA, IZQUIERDA
         };
 
-        int direccionActual = (int)direcciones.DERECHA;
+        int direccionActual = (int)direcciones.ESTATICO;
 
         public Sprite(int x, int y, string nombreImagen, ContentManager Content)
         {

@@ -12,8 +12,9 @@ namespace Pang
         private PantallaDeBienvenida bienvenida;
         private PantallaDeJuego juego;
         private PantallaDeCreditos creditos;
+        private PantallaDePuntuaciones puntuaciones;
 
-        public enum MODO {BIENVENIDA, JUEGO, CREDITOS};
+        public enum MODO {BIENVENIDA, JUEGO, PUNTUACIONES, CREDITOS};
         public MODO modoActual { get; set; }
 
         public GestorDePantallas()
@@ -26,13 +27,13 @@ namespace Pang
 
             bienvenida = new PantallaDeBienvenida(this);
             juego = new PantallaDeJuego(this);
+            puntuaciones = new PantallaDePuntuaciones(this);
             creditos = new PantallaDeCreditos(this);
+            
         }
 
         protected override void Initialize()
         {
-            // TODO: Add your initialization logic here
-
             base.Initialize();
         }
 
@@ -42,6 +43,7 @@ namespace Pang
 
             bienvenida.CargarContenidos(Content);
             juego.CargarContenidos(Content);
+            puntuaciones.CargarContenidos(Content);
             creditos.CargarContenidos(Content);
         }
 
@@ -49,31 +51,32 @@ namespace Pang
         {
             switch (modoActual)
             {
-                case MODO.JUEGO: juego.Actualizar(gameTime, Content); break;
                 case MODO.BIENVENIDA: bienvenida.Actualizar(gameTime); break;
+                case MODO.JUEGO: juego.Actualizar(gameTime, Content); break;
+                case MODO.PUNTUACIONES: puntuaciones.Actualizar(gameTime); break;
                 case MODO.CREDITOS: creditos.Actualizar(gameTime); break;
             }
 
             if (juego.Terminado == true)
             {
-                modoActual = MODO.CREDITOS;
+                modoActual = MODO.PUNTUACIONES;
                 juego.Terminado = false;
                 juego.CargarContenidos(Content);
-            }
-                
+            }          
 
             base.Update(gameTime);
         }
 
         protected override void Draw(GameTime gameTime)
         {
-            GraphicsDevice.Clear(Color.CornflowerBlue);
+            GraphicsDevice.Clear(Color.RoyalBlue);
 
             spriteBatch.Begin();
             switch (modoActual)
             {
                 case MODO.JUEGO: juego.Dibujar(gameTime, spriteBatch); break;
                 case MODO.BIENVENIDA: bienvenida.Dibujar(gameTime, spriteBatch); break;
+                case MODO.PUNTUACIONES: puntuaciones.Dibujar(gameTime, spriteBatch); break;
                 case MODO.CREDITOS: creditos.Dibujar(gameTime, spriteBatch); break;
             }
             spriteBatch.End();           

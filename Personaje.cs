@@ -26,6 +26,7 @@ namespace Pang
                 Content);
 
             CambiarDireccion((byte)direcciones.ESTATICO);
+            tiempoEnCadaFotograma = 100;
         }
 
         public void MoverDerecha(GameTime gameTime)

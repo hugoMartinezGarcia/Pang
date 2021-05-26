@@ -11,14 +11,10 @@ namespace Pang
     {
         private Marcador marcador;
         private Nivel nivel;
-        private Sprite fondo;
         private Personaje personaje;
-        private Bola bola;
         private Disparo disparo;
-        private int marco;
         private GestorDePantallas gestor;
         public bool Terminado { get; set; }
-        private SpriteFont fuente;
 
         private Song musicaDeFondo;
         private SoundEffect sonidoDeDisparo;
@@ -27,15 +23,11 @@ namespace Pang
         {
             this.gestor = gestor;
             Terminado = false;
-            marco = 24;
         }
 
         public void CargarContenidos(ContentManager Content)
         {
             personaje = new Personaje(549, 538, Content);
-            fondo = new Sprite(0, 0, "fondoNivel1", Content);
-            bola = new Bola(349, 40, Content);
-            fuente = Content.Load<SpriteFont>("Arial");
             disparo = new Disparo(0, 0, Content);
             marcador = new Marcador(Content);
             nivel = new Nivel(Content);
@@ -57,21 +49,21 @@ namespace Pang
         private void MoverElementos(GameTime gameTime, ContentManager Content)
         {        
 
-            if (bola.Caida && bola.Y + bola.Alto < fondo.Alto - marco)
-                bola.Y += 10;
+            if (nivel.bola.Caida && nivel.bola.Y + nivel.bola.Alto < nivel.Fondo.Alto - nivel.Marco)
+                nivel.bola.Y += 10;
             else
-                bola.Caida = false;
+                nivel.bola.Caida = false;
 
-            if (!bola.Caida)
+            if (!nivel.bola.Caida)
             {
-                bola.X += bola.VelocX;
-                if (bola.X > fondo.Ancho - bola.Ancho - marco
-                || bola.X < marco)
+                nivel.bola.X += nivel.bola.VelocX;
+                if (nivel.bola.X > nivel.Fondo.Ancho - nivel.bola.Ancho - nivel.Marco
+                || nivel.bola.X < nivel.Marco)
                 {
-                    bola.VelocX = -bola.VelocX;
+                    nivel.bola.VelocX = -nivel.bola.VelocX;
                 }
 
-                bola.MoverY();
+                nivel.bola.MoverY();
             }
 
 
@@ -89,10 +81,11 @@ namespace Pang
         public void ComprobarEntrada(ContentManager Content, GameTime gameTime)
         {
             var estadoTeclado = Keyboard.GetState();
+
             if (estadoTeclado.IsKeyDown(Keys.S))
             {
-                Terminado = true;
-                gestor.modoActual = GestorDePantallas.MODO.CREDITOS;
+                gestor.modoActual = GestorDePantallas.MODO.BIENVENIDA;
+                Reiniciar(Content);
             }
 
             if (!estadoTeclado.IsKeyDown(Keys.Left) 
@@ -127,17 +120,17 @@ namespace Pang
                     (int)disparo.PosDisparo[i].X, (int)disparo.PosDisparo[i].Y,
                     "disparo", Content);
 
-                if (bola.ColisionaCon(rDisparo))
+                if (nivel.bola.ColisionaCon(rDisparo))
                 {
                     marcador.IncrementarPuntos(100);
                     disparo.Activo = false;
                     disparo.PosDisparo.Clear();
-                    bola.MoverAPosicionInicial();
+                    nivel.bola.MoverAPosicionInicial();
                 }
                 i++;
             }
 
-            if (bola.ColisionaCon(personaje))
+            if (nivel.bola.ColisionaCon(personaje))
             {
                 PerderVida();
             }           
@@ -149,8 +142,8 @@ namespace Pang
             marcador.SetVidas(personaje.Vidas);
             nivel.Reiniciar();
             personaje.MoverAPosicionInicial();
-            bola.MoverAPosicionInicial();
-            bola.PosParabolaActual = 0;
+            nivel.bola.MoverAPosicionInicial();
+            nivel.bola.PosParabolaActual = 0;
             disparo.Activo = false;
             disparo.PosDisparo.Clear();
 
@@ -168,20 +161,16 @@ namespace Pang
             marcador.SetVidas(personaje.Vidas);
             marcador.ReiniciarPuntos();
             personaje.MoverAPosicionInicial();
-            bola.MoverAPosicionInicial();
+            nivel.bola.MoverAPosicionInicial();
             disparo.Activo = false;
             disparo.PosDisparo.Clear();
         }
 
         public void Dibujar(GameTime gameTime, SpriteBatch spriteBatch)
         {
-            
-            fondo.Dibujar(spriteBatch);
+            nivel.Dibujar(spriteBatch);
             disparo.Dibujar(spriteBatch);
             personaje.Dibujar(spriteBatch);
- 
-            bola.Dibujar(spriteBatch);
-
             marcador.Dibujar(spriteBatch);
         }
     }

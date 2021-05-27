@@ -10,7 +10,7 @@ namespace Pang
 {
     public class PantallaDeJuego
     {
-        private Marcador marcador;
+        public Marcador marcador;
         private GestorDeNiveles gestorDeNiveles;
         private Personaje personaje;
         private Disparo disparo;

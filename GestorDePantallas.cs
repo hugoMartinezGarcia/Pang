@@ -12,6 +12,7 @@ namespace Pang
         private PantallaDeJuego juego;
         private PantallaDeCreditos creditos;
         private PantallaDePuntuaciones puntuaciones;
+        public int Puntos { get; set; }
 
         public enum MODO {BIENVENIDA, JUEGO, PUNTUACIONES, CREDITOS};
         public MODO modoActual { get; set; }
@@ -57,6 +58,7 @@ namespace Pang
 
             if (juego.Terminado == true)
             {
+                Puntos = juego.marcador.PuntosAMostrar;
                 modoActual = MODO.PUNTUACIONES;
                 juego.Terminado = false;
                 juego.CargarContenidos(Content);

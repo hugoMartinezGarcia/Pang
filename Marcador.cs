@@ -1,13 +1,12 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
-using System.Threading;
 
 namespace Pang
 {
-    class Marcador
+    public class Marcador
     {
-        public int puntosAMostrar;
+        public int PuntosAMostrar { get; set; }
         private int vidas;
         private SpriteFont fuente;
         public float segundosRestantes;
@@ -31,18 +30,18 @@ namespace Pang
 
         public void ReiniciarPuntos()
         {
-            puntosAMostrar = 0;
+            PuntosAMostrar = 0;
         }
 
         public void IncrementarPuntos(int cantidad)
         {
-            puntosAMostrar += cantidad;
+            PuntosAMostrar += cantidad;
         }
 
         public void Dibujar(SpriteBatch spriteBatch)
         {
             spriteBatch.DrawString(fuente,
-                "Puntos: " + puntosAMostrar,
+                "Puntos: " + PuntosAMostrar,
                 new Vector2(1000, 25), Color.White);
             spriteBatch.DrawString(fuente,
                 "Vidas: " + vidas,

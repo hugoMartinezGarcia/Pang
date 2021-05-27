@@ -21,12 +21,12 @@ namespace Pang
         private Puntuacion puntuacionPartida;
         private string nombreJugador;
         private bool nombreIntroducido;
+
         public PantallaDePuntuaciones(GestorDePantallas gestor)
         {
             this.gestor = gestor;
             incremento = 0;
             puntuaciones = CargarPuntuaciones();
-            puntosFinales = 70000;
             nombreJugador = "";
         }
 
@@ -37,6 +37,7 @@ namespace Pang
 
         public void Actualizar(GameTime gameTime)
         {
+            puntosFinales = gestor.Puntos;
             if (Keyboard.GetState().IsKeyDown(Keys.Enter) && !nombreIntroducido)
             {
                 if (puntosFinales >= puntuaciones[puntuaciones.Count - 1].Puntos)
@@ -51,7 +52,6 @@ namespace Pang
             }
 
             ComprobarPuntuacion();
-
         }
 
         public List<Puntuacion> CargarPuntuaciones()
@@ -131,8 +131,6 @@ namespace Pang
                     new Vector2(400, 300),
                     Color.White);
             }
-            
-                
 
             if (nombreIntroducido || 
                 puntosFinales < puntuaciones[puntuaciones.Count - 1].Puntos)

@@ -4,7 +4,6 @@ using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using Microsoft.Xna.Framework.Media;
-using System.Threading;
 
 namespace Pang
 {
@@ -54,26 +53,34 @@ namespace Pang
         {
             if (!tiempoTerminado)
             {
-                if (gestorDeNiveles.NivelActual.bola.Caida &&
-                    gestorDeNiveles.NivelActual.bola.Y + gestorDeNiveles.NivelActual.bola.Alto <
-                    gestorDeNiveles.NivelActual.Fondo.Alto - gestorDeNiveles.NivelActual.Marco)
-                    gestorDeNiveles.NivelActual.bola.Y += 10;
-                else
-                    gestorDeNiveles.NivelActual.bola.Caida = false;
-
-                if (!gestorDeNiveles.NivelActual.bola.Caida)
+                foreach (Bola b in gestorDeNiveles.NivelActual.bolas)
                 {
-                    gestorDeNiveles.NivelActual.bola.X += gestorDeNiveles.NivelActual.bola.VelocX;
-                    if (gestorDeNiveles.NivelActual.bola.X > gestorDeNiveles.NivelActual.Fondo.Ancho -
-                        gestorDeNiveles.NivelActual.bola.Ancho - gestorDeNiveles.NivelActual.Marco
-                    || gestorDeNiveles.NivelActual.bola.X < gestorDeNiveles.NivelActual.Marco)
+                    if (b.Caida && b.Y + b.Alto < gestorDeNiveles.NivelActual.Fondo.Alto - 
+                        gestorDeNiveles.NivelActual.Marco)
                     {
-                        gestorDeNiveles.NivelActual.bola.VelocX = -gestorDeNiveles.NivelActual.bola.VelocX;
+                        b.Y += 10;
+                    }     
+                    else
+                    {
+                        b.Caida = false;
                     }
-
-                    gestorDeNiveles.NivelActual.bola.MoverY();
                 }
 
+                foreach (Bola b in gestorDeNiveles.NivelActual.bolas)
+                {
+                    if (!b.Caida)
+                    {
+                        b.MoverY();
+
+                        b.X += b.VelocX;
+                        if (b.X > gestorDeNiveles.NivelActual.Fondo.Ancho -
+                            b.Ancho - gestorDeNiveles.NivelActual.Marco
+                            || b.X < gestorDeNiveles.NivelActual.Marco)
+                        {
+                            b.VelocX = -b.VelocX;
+                        }
+                    }
+                }
 
                 disparo.Mover(gameTime, Content);
 
@@ -93,8 +100,7 @@ namespace Pang
                 {
                     tiempoTerminado = false;
                     PerderVida();
-                }
-                    
+                }     
             }
         }
 
@@ -140,20 +146,26 @@ namespace Pang
                     (int)disparo.PosDisparo[i].X, (int)disparo.PosDisparo[i].Y,
                     "disparo", Content);
 
-                if (gestorDeNiveles.NivelActual.bola.ColisionaCon(rDisparo))
+                foreach (Bola b in gestorDeNiveles.NivelActual.bolas)
                 {
-                    marcador.IncrementarPuntos(100);
-                    disparo.Activo = false;
-                    disparo.PosDisparo.Clear();
-                    gestorDeNiveles.NivelActual.bola.MoverAPosicionInicial();
+                    if (b.ColisionaCon(rDisparo))
+                    {
+                        marcador.IncrementarPuntos(100);
+                        disparo.Activo = false;
+                        disparo.PosDisparo.Clear();
+                        b.MoverAPosicionInicial();
+                    }
                 }
                 i++;
             }
 
-            if (gestorDeNiveles.NivelActual.bola.ColisionaCon(personaje))
+            foreach (Bola b in gestorDeNiveles.NivelActual.bolas)
             {
-                PerderVida();
-            }           
+                if (b.ColisionaCon(personaje))
+                {
+                    PerderVida();
+                }
+            }
         }
 
         private void PerderVida()
@@ -162,8 +174,12 @@ namespace Pang
             marcador.SetVidas(personaje.Vidas);
             gestorDeNiveles.NivelActual.Reiniciar();
             personaje.MoverAPosicionInicial();
-            gestorDeNiveles.NivelActual.bola.MoverAPosicionInicial();
-            gestorDeNiveles.NivelActual.bola.PosParabolaActual = 0;
+            foreach (Bola b in gestorDeNiveles.NivelActual.bolas)
+            {
+                b.MoverAPosicionInicial();
+                b.PosParabolaActual = 0;
+            }
+            
             disparo.Activo = false;
             disparo.PosDisparo.Clear();
 
@@ -181,7 +197,8 @@ namespace Pang
             marcador.SetVidas(personaje.Vidas);
             marcador.ReiniciarPuntos();
             personaje.MoverAPosicionInicial();
-            gestorDeNiveles.NivelActual.bola.MoverAPosicionInicial();
+            foreach (Bola b in gestorDeNiveles.NivelActual.bolas)
+                b.MoverAPosicionInicial();
             disparo.Activo = false;
             disparo.PosDisparo.Clear();
         }

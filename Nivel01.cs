@@ -6,7 +6,8 @@ namespace Pang
     {
         public Nivel01(ContentManager Content) 
             : base(Content)
-        { 
+        {
+            bolas.Add(new Bola(349, 40, Content));
         }
 
     }

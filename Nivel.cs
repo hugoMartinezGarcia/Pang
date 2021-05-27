@@ -1,12 +1,13 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
+using System.Collections.Generic;
 
 namespace Pang
 {
     class Nivel
     {
-        public Bola bola { get; }
+        public List<Bola> bolas { get; }
         public Sprite Fondo { get; }
         public int Marco { get; }
 
@@ -16,7 +17,7 @@ namespace Pang
         public Nivel(ContentManager Content)
         {
             Fondo = new Sprite(0, 0, "fondoNivel1", Content);
-            bola = new Bola(349, 40, Content);
+            bolas = new List<Bola>();
             Marco = 24;
         }
 
@@ -35,7 +36,11 @@ namespace Pang
         public void Dibujar(SpriteBatch spriteBatch)
         {
             Fondo.Dibujar(spriteBatch);
-            bola.Dibujar(spriteBatch);
+            
+            foreach (Bola b in bolas)
+            {
+                b.Dibujar(spriteBatch);
+            }
         }
     }
 

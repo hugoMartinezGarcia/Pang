@@ -21,6 +21,8 @@ namespace Pang
         private Puntuacion puntuacionPartida;
         private string nombreJugador;
         private bool nombreIntroducido;
+        private bool mostrarPuntuaciones;
+        private int fotogramasRestantes;
 
         public PantallaDePuntuaciones(GestorDePantallas gestor)
         {
@@ -28,6 +30,8 @@ namespace Pang
             incremento = 0;
             puntuaciones = CargarPuntuaciones();
             nombreJugador = "";
+            nombreIntroducido = false;
+            mostrarPuntuaciones = false;
         }
 
         public void CargarContenidos(ContentManager Content)
@@ -52,6 +56,24 @@ namespace Pang
             }
 
             ComprobarPuntuacion();
+
+            if ((nombreIntroducido || 
+                puntosFinales < puntuaciones[puntuaciones.Count - 1].Puntos) && 
+                !mostrarPuntuaciones)
+            {
+                mostrarPuntuaciones = true;
+                fotogramasRestantes = 400;
+            }
+
+            if (mostrarPuntuaciones)
+            {
+                fotogramasRestantes--;
+                if (fotogramasRestantes <= 0)
+                {
+                    mostrarPuntuaciones = false;
+                    gestor.modoActual = GestorDePantallas.MODO.CREDITOS;
+                }
+            } 
         }
 
         public List<Puntuacion> CargarPuntuaciones()
@@ -132,8 +154,7 @@ namespace Pang
                     Color.White);
             }
 
-            if (nombreIntroducido || 
-                puntosFinales < puntuaciones[puntuaciones.Count - 1].Puntos)
+            if (mostrarPuntuaciones)
             {
                 spriteBatch.DrawString(fuente, "MEJORES PUNTUACIONES",
                     new Vector2(450, 100),
@@ -154,6 +175,8 @@ namespace Pang
                         incremento += 40;
                     }
                 }
+
+                fotogramasRestantes--;
             }
         }
         

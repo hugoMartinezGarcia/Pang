@@ -1,6 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
+using System.Threading;
 
 namespace Pang
 {
@@ -10,6 +11,8 @@ namespace Pang
         private int vidas;
         private SpriteFont fuente;
         public float segundosRestantes;
+
+        public object Thread { get; internal set; }
 
         public Marcador(ContentManager Content)
         {
@@ -46,7 +49,7 @@ namespace Pang
                 new Vector2(1000, 60), Color.White);
             spriteBatch.DrawString(fuente,
                 "Tiempo: " + (int)segundosRestantes,
-                new Vector2(1000, 95), Color.White);
+                new Vector2(1000, 95), Color.White);                 
         }
     }
 }

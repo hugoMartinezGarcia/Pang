@@ -1,7 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
-using Microsoft.Xna.Framework.Input;
+
 
 namespace Pang
 {
@@ -29,7 +28,6 @@ namespace Pang
             juego = new PantallaDeJuego(this);
             puntuaciones = new PantallaDePuntuaciones(this);
             creditos = new PantallaDeCreditos(this);
-            
         }
 
         protected override void Initialize()

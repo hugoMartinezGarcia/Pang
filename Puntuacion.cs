@@ -1,27 +1,35 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Text;
+
 
 namespace Pang
 {
-    class Puntuacion
+    class Puntuacion : IComparable<Puntuacion>
     {
-        const string NOMBRE_ARCHIVO = "puntuaciones.txt";
-        public List<string> CargarPuntuaciones()
-        {
-            List<string> puntuaciones = new List<string>();
+        public string Nombre { get; set; }
+        public int Puntos { get; set; }
 
-            if (File.Exists(NOMBRE_ARCHIVO))
-                puntuaciones = new List<string>(File.ReadAllLines(NOMBRE_ARCHIVO));
-            return puntuaciones;
+        public Puntuacion(string nombre, int puntuacion)
+        {
+            this.Nombre = nombre;
+            this.Puntos = puntuacion;
         }
-        
 
-        public void GuardarPuntuaciones()
+        public void CrearDesdeFichero(string linea)
         {
-            List<string> prueba = new List<string>();
-            File.WriteAllLines(NOMBRE_ARCHIVO, prueba);
+            string[] fragmentos = linea.Split(';');
+
+            Nombre = fragmentos[0];
+            Puntos = Convert.ToInt32(fragmentos[1]);
+        }
+
+        public string PrepararParaFichero()
+        {
+            return Nombre + ";" + Puntos;
+        }
+
+        public int CompareTo(Puntuacion otro)
+        {
+            return otro.Puntos.CompareTo(Puntos);
         }
 
     }

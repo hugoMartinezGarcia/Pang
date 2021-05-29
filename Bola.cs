@@ -20,12 +20,24 @@ namespace Pang
                 19,19};
 
         public Bola(int x, int y, ContentManager Content)
-            : base(x, y, "balon", Content)
+            : base(x, y, new string[] { "balon" }, Content)
         {
             PosParabolaActual = 0;
             Caida = true;
             VelocX = 4;
             Tamanyo = new Vector2();
+
+            CargarSecuencia((byte) direcciones.DESAPARECIENDO,
+                new string[] { "explosion1", "explosion2", "explosion3" },
+                Content);
+            CambiarDireccion(0);
+        }
+
+        public void Explotar()
+        {
+            Chocable = false;
+            CambiarDireccion((byte)direcciones.DESAPARECIENDO);
+
         }
 
         public Bola(int x, int y, string nombreImagen, ContentManager Content)

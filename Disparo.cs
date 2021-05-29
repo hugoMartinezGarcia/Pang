@@ -15,13 +15,14 @@ namespace Pang
             : base(x, y, "disparo", Content)
         {
             VelocY = 300;
-            Activo = false;
+            Visible = false;
+            Chocable = false;
             PosDisparo = new List<Disparo>();
         }
 
         public void Mover(GameTime gameTime, ContentManager Content)
         {
-            if (Activo)
+            if (Chocable)
             {
                 Y -= VelocY * (float)gameTime.ElapsedGameTime.TotalSeconds;
 
@@ -38,7 +39,7 @@ namespace Pang
 
                 if (PosDisparo[0].Y < 24)
                 {
-                    Activo = false;
+                    Chocable = false;
                     PosDisparo.Clear();
                 }
             }
@@ -47,7 +48,7 @@ namespace Pang
 
         public override void Dibujar(SpriteBatch spriteBatch)
         {
-            if (Activo)
+            if (Visible)
             {
                 foreach (Sprite pos in PosDisparo)
                 {

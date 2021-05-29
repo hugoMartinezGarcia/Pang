@@ -10,7 +10,8 @@ namespace Pang
         public float Y { get; set; }
         public float VelocX { get; set; }
         public float VelocY { get; set; }
-        public bool Activo { get; set; }
+        public bool Visible { get; set; }
+        public bool Chocable { get; set; }
         public int Ancho { get; set; }
         public int Alto { get; set; }
         protected Texture2D imagen;
@@ -23,17 +24,19 @@ namespace Pang
 
         protected enum direcciones
         {
-            ESTATICO, DERECHA, IZQUIERDA
+            ESTATICO, DERECHA, IZQUIERDA, DESAPARECIENDO
         };
 
         int direccionActual = (int)direcciones.ESTATICO;
+        protected int cantidadDeDirecciones = 4;
 
         public Sprite(int x, int y, string nombreImagen, ContentManager Content)
         {
             X = x;
             Y = y;
             imagen = Content.Load<Texture2D>(nombreImagen);
-            Activo = true;
+            Visible = true;
+            Chocable = true;
             Ancho = imagen.Width;
             Alto = imagen.Height;
             haySecuencia = false;
@@ -43,8 +46,9 @@ namespace Pang
         {
             X = x;
             Y = y;
-            Activo = true;
-            secuencia = new Texture2D[sizeof(direcciones)][];
+            Visible = true;
+            Chocable = true;
+            secuencia = new Texture2D[cantidadDeDirecciones][];
             CargarSecuencia(0, imagenes, Content);
             imagen = secuencia[0][0];
             fotogramaActual = 0;
@@ -65,7 +69,7 @@ namespace Pang
 
         public virtual void Dibujar(SpriteBatch spriteBatch)
         {
-            if (Activo)
+            if (Visible)
             {
                 spriteBatch.Draw(imagen, new Rectangle(
                 (int)X, (int)Y,
@@ -76,8 +80,8 @@ namespace Pang
 
         public bool ColisionaCon(Sprite otro)
         {
-            if (!Activo) return false;
-            if (!otro.Activo) return false;
+            if (!Chocable) return false;
+            if (!otro.Chocable) return false;
 
             Rectangle r1 = new Rectangle((int)X, (int)Y, imagen.Width, imagen.Height);
             Rectangle r2 = new Rectangle((int)otro.X, (int)otro.Y, otro.imagen.Width, otro.imagen.Height);
@@ -95,7 +99,16 @@ namespace Pang
                     fotogramaActual++;
                     
                     if (fotogramaActual >= cantidadFotogramas)
+                    {
                         fotogramaActual = 0;
+                        if (direccionActual == (byte)direcciones.DESAPARECIENDO)
+                        {
+                            Visible = false;
+                            Chocable = false;
+                        }
+                            
+                    }
+                        
 
                     tiempoHastaSiguienteFotograma = tiempoEnCadaFotograma;
                     imagen = secuencia[direccionActual][fotogramaActual];

@@ -8,7 +8,7 @@ namespace Pang
     class Nivel
     {
         public List<Bola> bolas { get; }
-        public Sprite Fondo { get; }
+        public Sprite Fondo { get; set; }
         public int Marco { get; }
 
         public float SegundosRestantes { get; set; }
@@ -31,6 +31,13 @@ namespace Pang
         {
             SegundosRestantes -= (float)gameTime.ElapsedGameTime.TotalSeconds;
             TiempoTerminado = SegundosRestantes <= 0;
+        }
+
+        public void CrearNuevaBola(ContentManager Content)
+        {
+            Bola b = new Bola(0, 0, Content);
+            b.MoverAPosicionInicial();
+            bolas.Add(b);
         }
 
         public void Dibujar(SpriteBatch spriteBatch)

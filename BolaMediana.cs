@@ -17,7 +17,7 @@ namespace Pang
 
         public override void Dibujar(SpriteBatch spriteBatch)
         {
-            if (Activo)
+            if (Visible)
             {
                 spriteBatch.Draw(imagen, new Rectangle(
                 (int)X, (int)Y,

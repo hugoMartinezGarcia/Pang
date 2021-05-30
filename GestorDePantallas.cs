@@ -1,7 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
-
 namespace Pang
 {
     public class GestorDePantallas : Game
@@ -82,6 +81,14 @@ namespace Pang
             spriteBatch.End();           
 
             base.Draw(gameTime);
+        }
+
+        public int MoverTexto(ref int posInicial, int posFinal, int velocidad)
+        {
+            if (posInicial > posFinal)
+                posInicial -= velocidad;
+
+            return posInicial;
         }
 
         public void Terminar()

@@ -14,6 +14,7 @@ namespace Pang
             niveles = new List<Nivel>();
             niveles.Add(new Nivel01(Content));
             niveles.Add(new Nivel02(Content));
+            niveles.Add(new Nivel03(Content));
             numeroNivelActual = 0;
             NivelActual = niveles[0];
         }
@@ -25,6 +26,12 @@ namespace Pang
                 numeroNivelActual = 0;
 
             NivelActual = niveles[numeroNivelActual];
+        }
+
+        // Para volver a empezar en el nivel 1 si se pulsa S durante la partida
+        public void VolverANivelInicial()
+        {
+            NivelActual = niveles[0];
         }
     }
 }

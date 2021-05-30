@@ -1,14 +1,14 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
-using System;
 using System.Collections.Generic;
-using System.Text;
 
 namespace Pang
 {
     class Disparo : Sprite
     {
+        // Se crea una lista de objetos disparo, ya que se pretende formar una estela
+        // repitiendo la misma imagen
         public List<Disparo> PosDisparo { get; set; }
 
         public Disparo(int x, int y, ContentManager Content)
@@ -29,7 +29,8 @@ namespace Pang
                 PosDisparo.Add(new Disparo((int)X, (int)Y, Content));
 
                 PosDisparo[0] = new Disparo((int)PosDisparo[0].X,
-                    (int)PosDisparo[0].Y - (int)(VelocY * (float)gameTime.ElapsedGameTime.TotalSeconds), Content);
+                    (int)PosDisparo[0].Y - 
+                    (int)(VelocY * (float)gameTime.ElapsedGameTime.TotalSeconds), Content);
 
 
                 for (int i = PosDisparo.Count - 1; i > 0; i--)
@@ -43,7 +44,6 @@ namespace Pang
                     PosDisparo.Clear();
                 }
             }
-
         }
 
         public override void Dibujar(SpriteBatch spriteBatch)

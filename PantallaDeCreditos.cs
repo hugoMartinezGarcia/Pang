@@ -9,11 +9,15 @@ namespace Pang
     {
         private SpriteFont fuente;
         private GestorDePantallas gestor;
+        private int posYTitulo, posYSubtitulo, posYAutor;
 
 
         public PantallaDeCreditos(GestorDePantallas gestor)
         {
             this.gestor = gestor;
+            posYTitulo = 650;
+            posYSubtitulo = 700;
+            posYAutor = 850;
         }
 
         public void CargarContenidos(ContentManager Content)
@@ -23,9 +27,17 @@ namespace Pang
 
         public void Actualizar(GameTime gameTime)
         {
-            if (Keyboard.GetState().IsKeyDown(Keys.S))
+            gestor.MoverTexto(ref posYTitulo, -100, 2);
+            gestor.MoverTexto(ref posYSubtitulo, -100, 2);
+            gestor.MoverTexto(ref posYAutor, -100, 2);
+
+            if (posYAutor == -10 || Keyboard.GetState().IsKeyDown(Keys.S))
             {
                 gestor.modoActual = GestorDePantallas.MODO.BIENVENIDA;
+
+                posYTitulo = 650;
+                posYSubtitulo = 700;
+                posYAutor = 850;
             }
         }
 
@@ -33,19 +45,15 @@ namespace Pang
         {
 
             spriteBatch.DrawString(fuente, "PANG ORIGINAL:",
-                new Vector2(450, 100),
+                new Vector2(450, posYTitulo),
                 Color.White);
 
             spriteBatch.DrawString(fuente, "(C) 1989 Mitchell Corporation",
-                new Vector2(400, 150), Color.White);
+                new Vector2(400, posYSubtitulo), Color.White);
 
             spriteBatch.DrawString(fuente, "REMAKE: Por Hugo Martinez",
-                new Vector2(400, 300),
+                new Vector2(400, posYAutor),
                 Color.White);
-
-            spriteBatch.DrawString(fuente, "Pulsa S para volver",
-                new Vector2(420
-                , 450), Color.White);
         }
     }
 }

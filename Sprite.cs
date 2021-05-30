@@ -105,11 +105,9 @@ namespace Pang
                         {
                             Visible = false;
                             Chocable = false;
-                        }
-                            
+                        }   
                     }
                         
-
                     tiempoHastaSiguienteFotograma = tiempoEnCadaFotograma;
                     imagen = secuencia[direccionActual][fotogramaActual];
                 }

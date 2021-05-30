@@ -20,6 +20,8 @@ namespace Pang
         private SoundEffect sonidoDeDisparo;
         private bool tiempoTerminado;
         private int fotogramasRestantes;
+        private bool itemActivo;
+        private bool itemUsado;
 
         public PantallaDeJuego(GestorDePantallas gestor)
         {
@@ -29,7 +31,7 @@ namespace Pang
 
         public void CargarContenidos(ContentManager Content)
         {
-            fuente = Content.Load<SpriteFont>("Arial");
+            fuente = Content.Load<SpriteFont>("Games");
             personaje = new Personaje(549, 538, Content);
             disparo = new Disparo(0, 0, Content);
             marcador = new Marcador(Content);
@@ -40,6 +42,8 @@ namespace Pang
             MediaPlayer.IsRepeating = true;
             tiempoTerminado = false;
             Reiniciar(Content);
+            itemActivo = false;
+            itemUsado = false;
         }
 
         public void Actualizar(GameTime gameTime, ContentManager Content)
@@ -47,50 +51,7 @@ namespace Pang
             MoverElementos(Content, gameTime);
             ComprobarEntrada(Content, gameTime);
             ComprobarColisiones(Content, gameTime);
-            if (gestorDeNiveles.NivelActual.TiempoTerminado)
-            {
-                gestorDeNiveles.AvanzarNivel();
-            }
-        }
 
-        private void MoverElementos(ContentManager Content, GameTime gameTime)
-        {
-            if (!tiempoTerminado)
-            {
-                foreach (Bola b in gestorDeNiveles.NivelActual.bolas)
-                {
-                    if (b.Caida && b.Y + b.Alto < gestorDeNiveles.NivelActual.Fondo.Alto -
-                        gestorDeNiveles.NivelActual.Marco && b.Chocable)
-                    {
-                        b.Y += 10;
-                    }
-                    else
-                    {
-                        b.Caida = false;
-                    }
-                }
-
-                foreach (Bola b in gestorDeNiveles.NivelActual.bolas)
-                {
-                    if (!b.Caida && b.Chocable)
-                    {
-                        b.MoverY();
-
-                        b.X += b.VelocX;
-                        if (b.X > gestorDeNiveles.NivelActual.Fondo.Ancho -
-                            b.Ancho - gestorDeNiveles.NivelActual.Marco
-                            || b.X < gestorDeNiveles.NivelActual.Marco)
-                        {
-                            b.VelocX = -b.VelocX;
-                        }
-                    }
-                }
-
-                disparo.Mover(gameTime, Content);
-
-                gestorDeNiveles.NivelActual.Animar(gameTime);
-                marcador.SetSegundosRestantes(gestorDeNiveles.NivelActual.SegundosRestantes);
-            }
             if (gestorDeNiveles.NivelActual.TiempoTerminado && !tiempoTerminado)
             {
                 tiempoTerminado = true;
@@ -107,7 +68,56 @@ namespace Pang
                 }
             }
 
-            foreach (Bola b in gestorDeNiveles.NivelActual.bolas)
+            if (gestorDeNiveles.NivelActual.TiempoTerminado)
+            {
+                gestorDeNiveles.AvanzarNivel();
+                gestorDeNiveles.NivelActual.TiempoTerminado = false;
+                itemUsado = false;
+            }
+
+            if (!itemActivo)
+                gestorDeNiveles.NivelActual.ActivarItem(itemUsado);
+
+            if (itemActivo)
+            {
+                fotogramasRestantes--;
+                if (fotogramasRestantes <= 0)
+                {
+                    itemActivo = false;
+                }
+            }
+        }
+
+        private void MoverElementos(ContentManager Content, GameTime gameTime)
+        {
+            if (!tiempoTerminado)
+            {
+
+                if (!itemActivo)
+                {
+                    foreach (Bola b in gestorDeNiveles.NivelActual.Bolas)
+                    {
+                        b.MoverEnCaidaLibre(gestorDeNiveles);
+                    }
+
+                    foreach (Bola b in gestorDeNiveles.NivelActual.Bolas)
+                    {
+                        if (!b.Caida && b.Chocable)
+                        {
+                            b.MoverY();
+
+                            b.MoverX(gestorDeNiveles, gameTime);
+                        }
+                    }
+                }
+
+                disparo.Mover(gameTime, Content);
+
+                gestorDeNiveles.NivelActual.Animar(gameTime);
+                marcador.SetSegundosRestantes(gestorDeNiveles.NivelActual.SegundosRestantes);
+            }
+
+            foreach (Bola b in gestorDeNiveles.NivelActual.Bolas)
             {
                 b.Animar(gameTime);
             }
@@ -120,6 +130,7 @@ namespace Pang
             if (estadoTeclado.IsKeyDown(Keys.S))
             {
                 gestor.modoActual = GestorDePantallas.MODO.BIENVENIDA;
+                gestorDeNiveles.VolverANivelInicial();
                 Reiniciar(Content);
             }
 
@@ -152,18 +163,24 @@ namespace Pang
             int i = 0;
             while (i < disparo.PosDisparo.Count && disparo.Chocable)
             {
-                Sprite rDisparo = new Sprite(
-                    (int)disparo.PosDisparo[i].X, (int)disparo.PosDisparo[i].Y,
-                    "disparo", Content);
 
-                for (int j = 0; j < gestorDeNiveles.NivelActual.bolas.Count; j++)
+                /* No funciona si hago:
+                 * gestorDeNiveles.NivelActual.Bolas[j].ColisionaCon(disparo.PosDisparo[i])
+                 * Tengo que crear un Sprite con cada posición del array de disparo
+                 */
+                Sprite rDisparo = (Sprite)disparo.PosDisparo[i];
+               disparo.PosDisparo[i].Chocable = true;
+                
+                for (int j = 0; j < gestorDeNiveles.NivelActual.Bolas.Count; j++)
                 {
-                    if (gestorDeNiveles.NivelActual.bolas[j].ColisionaCon(rDisparo))
+                    if (gestorDeNiveles.NivelActual.Bolas[j].Chocable
+                        && gestorDeNiveles.NivelActual.Bolas[j].ColisionaCon(rDisparo))
                     {
-                        gestorDeNiveles.NivelActual.bolas[j].Explotar();
+                        gestorDeNiveles.NivelActual.Bolas[j].Explotar();
                         marcador.IncrementarPuntos(100);
                         disparo.Visible = false;
                         disparo.Chocable = false;
+                        gestorDeNiveles.NivelActual.Bolas[j].Chocable = false;
                         disparo.PosDisparo.Clear();
                         gestorDeNiveles.NivelActual.CrearNuevaBola(Content);
                     }
@@ -171,12 +188,21 @@ namespace Pang
                 i++;
             }
 
-            foreach (Bola b in gestorDeNiveles.NivelActual.bolas)
+            foreach (Bola b in gestorDeNiveles.NivelActual.Bolas)
             {
                 if (b.ColisionaCon(personaje))
                 {
                     PerderVida();
                 }
+            }
+
+            if (gestorDeNiveles.NivelActual.Item.ColisionaCon(personaje) && !itemActivo)
+            {
+                gestorDeNiveles.NivelActual.Item.Chocable = false;
+                gestorDeNiveles.NivelActual.Item.Visible = false;
+                itemActivo = true;
+                itemUsado = true;
+                fotogramasRestantes = 200;
             }
         }
 
@@ -186,7 +212,7 @@ namespace Pang
             marcador.SetVidas(personaje.Vidas);
             gestorDeNiveles.NivelActual.Reiniciar();
             personaje.MoverAPosicionInicial();
-            foreach (Bola b in gestorDeNiveles.NivelActual.bolas)
+            foreach (Bola b in gestorDeNiveles.NivelActual.Bolas)
             {
                 b.MoverAPosicionInicial();
                 b.PosParabolaActual = 0;
@@ -206,11 +232,12 @@ namespace Pang
             marcador.SetVidas(personaje.Vidas);
             marcador.ReiniciarPuntos();
             personaje.MoverAPosicionInicial();
-            foreach (Bola b in gestorDeNiveles.NivelActual.bolas)
+            foreach (Bola b in gestorDeNiveles.NivelActual.Bolas)
                 b.MoverAPosicionInicial();
             disparo.Visible = false;
             disparo.Chocable = false;
             disparo.PosDisparo.Clear();
+            itemUsado = false;
         }
 
         public void Dibujar(GameTime gameTime, SpriteBatch spriteBatch)
@@ -223,8 +250,8 @@ namespace Pang
             if (tiempoTerminado)
             {
                 spriteBatch.DrawString(fuente,
-                "TIEMPO ACABADO",
-                new Vector2(450, 200), Color.White);
+                    "TIME OVER",
+                    new Vector2(450, 200), Color.White);
             }
         }
     }

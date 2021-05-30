@@ -1,4 +1,6 @@
-﻿using System;
+﻿// Hugo Martínez
+
+using System;
 
 namespace Pang
 {

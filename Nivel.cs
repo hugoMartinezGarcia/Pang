@@ -5,27 +5,31 @@ using System.Collections.Generic;
 
 namespace Pang
 {
-    class Nivel
+    abstract class Nivel
     {
-        public List<Bola> bolas { get; }
+        public List<Bola> Bolas { get; }
         public Sprite Fondo { get; set; }
         public int Marco { get; }
+        public Sprite Item { get; set; }
 
         public float SegundosRestantes { get; set; }
         public bool TiempoTerminado { get; set; }
 
         public Nivel(ContentManager Content)
         {
-            Fondo = new Sprite(0, 0, "fondoNivel1", Content);
-            bolas = new List<Bola>();
+            Bolas = new List<Bola>();
             Marco = 24;
         }
 
         public virtual void Reiniciar()
         {
-            SegundosRestantes = 10;
+            SegundosRestantes = 100;
             TiempoTerminado = false;
         }
+
+        // Método abstracto para activar el ítem unos segundos determinados en cada nivel
+        public abstract void ActivarItem(bool itemUsado);
+
 
         public void Animar(GameTime gameTime)
         {
@@ -37,19 +41,22 @@ namespace Pang
         {
             Bola b = new Bola(0, 0, Content);
             b.MoverAPosicionInicial();
-            bolas.Add(b);
+            Bolas.Add(b);
         }
 
-        public void Dibujar(SpriteBatch spriteBatch)
+        public virtual void Dibujar(SpriteBatch spriteBatch)
         {
             Fondo.Dibujar(spriteBatch);
             
-            foreach (Bola b in bolas)
+            foreach (Bola b in Bolas)
             {
                 b.Dibujar(spriteBatch);
             }
-        }
-    }
 
-    
+            if (Item.Visible)
+            {
+                Item.Dibujar(spriteBatch);
+            }
+        }
+    }  
 }

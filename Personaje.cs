@@ -14,7 +14,6 @@ namespace Pang
             : base(x, y, new string[] {"personajeD"}, Content)
         {
             VelocX = 240;
-            Vidas = 3;
             CargarSecuencia((byte)direcciones.IZQUIERDA, 
                 new string[] { "personajeI1", "personajeI2", "personajeI3", 
                     "personajeI4", "personajeI5", "personajeI4", "personajeI3", "personajeI2" }, 

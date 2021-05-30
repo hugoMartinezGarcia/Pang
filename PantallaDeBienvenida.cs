@@ -10,15 +10,15 @@ namespace Pang
         private SpriteFont fuente;
         private SpriteFont fuenteOpciones;
         private GestorDePantallas gestor;
-        private int p, a, n, g;
+        private int posXLetraP, posXLetraA, posXLetraN, porXLetraG;
 
         public PantallaDeBienvenida(GestorDePantallas gestor)
         {
             this.gestor = gestor;
-            p = 1500;
-            a = 1800;
-            n = 2100;
-            g = 2400;
+            posXLetraP = 1500;
+            posXLetraA = 1800;
+            posXLetraN = 2100;
+            porXLetraG = 2400;
         }
 
         public void CargarContenidos(ContentManager Content)
@@ -29,18 +29,19 @@ namespace Pang
 
         public void Actualizar(GameTime gameTime)
         {
-            if (p > 350)
-                p -= 5;
-            if (a > 450)
-                a -= 5;
-            if (n > 550)
-                n -= 5;
-            if (g > 650)
-                g -= 5;
+            gestor.MoverTexto(ref posXLetraP, 350, 5);
+            gestor.MoverTexto(ref posXLetraA, 450, 5);
+            gestor.MoverTexto(ref posXLetraN, 550, 5);
+            gestor.MoverTexto(ref porXLetraG, 650, 5);
 
             if (Keyboard.GetState().IsKeyDown(Keys.Enter))
             {
                 gestor.modoActual = GestorDePantallas.MODO.JUEGO;
+
+                posXLetraP = 1500;
+                posXLetraA = 1800;
+                posXLetraN = 2100;
+                porXLetraG = 2400;
             }
 
             if (Keyboard.GetState().IsKeyDown(Keys.Escape))
@@ -53,20 +54,20 @@ namespace Pang
         {
             
             spriteBatch.DrawString(fuente, "P",
-            new Vector2(p, 150),
+            new Vector2(posXLetraP, 150),
             Color.White);
 
            
             spriteBatch.DrawString(fuente, "A",
-            new Vector2(a, 150),
+            new Vector2(posXLetraA, 150),
             Color.White);
 
             spriteBatch.DrawString(fuente, "N",
-            new Vector2(n, 150),
+            new Vector2(posXLetraN, 150),
             Color.White);
 
             spriteBatch.DrawString(fuente, "G",
-            new Vector2(g, 150),
+            new Vector2(porXLetraG, 150),
             Color.White);
 
 

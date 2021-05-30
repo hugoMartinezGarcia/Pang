@@ -1,8 +1,6 @@
-﻿using Microsoft.Xna.Framework.Content;
+﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Content;
 using System;
-using System.Collections.Generic;
-using System.Numerics;
-using System.Text;
 
 namespace Pang
 {
@@ -24,7 +22,7 @@ namespace Pang
         {
             PosParabolaActual = 0;
             Caida = true;
-            VelocX = 4;
+            VelocX = 240;
             Tamanyo = new Vector2();
 
             CargarSecuencia((byte) direcciones.DESAPARECIENDO,
@@ -33,6 +31,10 @@ namespace Pang
             CambiarDireccion(0);
         }
 
+        public Bola(int x, int y, string nombreImagen, ContentManager Content)
+            : base(x, y, nombreImagen, Content)
+        { }
+
         public void Explotar()
         {
             Chocable = false;
@@ -40,9 +42,31 @@ namespace Pang
 
         }
 
-        public Bola(int x, int y, string nombreImagen, ContentManager Content)
-            : base(x, y, nombreImagen, Content)
-        { }
+        public void MoverEnCaidaLibre(GestorDeNiveles gestor)
+        {
+            if (Caida && Y + Alto < gestor.NivelActual.Fondo.Alto -
+                        gestor.NivelActual.Marco && Chocable)
+            {
+                Y += 10;
+            }
+            else
+            {
+                Caida = false;
+            }
+        }
+
+        public void MoverX(GestorDeNiveles gestor, GameTime gameTime )
+        {
+            float desplazamiento = VelocX * (float)gameTime.ElapsedGameTime.TotalSeconds;
+            X += desplazamiento;
+
+            if (X > gestor.NivelActual.Fondo.Ancho -
+                Ancho - gestor.NivelActual.Marco
+                || X < gestor.NivelActual.Marco)
+            {
+                VelocX = -VelocX;
+            }
+        }
 
         public void MoverY()
         {
@@ -58,7 +82,7 @@ namespace Pang
         {
             Random posicionAzar = new Random();
             X = posicionAzar.Next(100, 900);
-            Y = posicionAzar.Next(50, 200);
+            Y = posicionAzar.Next(50, 150);
             Caida = true;
             PosParabolaActual = 0;
         }
